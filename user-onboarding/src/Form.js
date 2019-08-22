@@ -33,6 +33,9 @@ return (
      <label className="checkbox">Accept Terms of Service
      <Field type="checkbox" name="terms" checked={values.terms} />
      <span className="checkmark" />
+     {touched.terms && errors.terms && (
+         <p className="error">{errors.terms}</p>
+     )}
      </label>
 
      <button type="submit">Submit!</button>
@@ -66,9 +69,17 @@ return (
     },
 
     validationSchema: Yup.object().shape({
-        name: Yup.string().required(),
-        email: Yup.string().required(),
-        password: Yup.string().required()
+        name: Yup.string().required("please type full name here"),
+        email: Yup.string().required("we need a valid email"),
+        password: Yup.string().required().min(6, 'password has to be longer than 6'),
+        terms: Yup.bool().test(
+        'consent',
+        'You have to agree with our Terms and Conditions!',
+        value => value === true
+      )
+      .required(
+        'You have to agree with our Terms and Conditions!'
+      ),
     }),
     handleSubmit(values, { setStatus}) {
     axios
